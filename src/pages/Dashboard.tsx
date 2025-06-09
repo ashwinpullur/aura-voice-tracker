@@ -1,7 +1,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Heart, Activity, Calendar, Pill, User, Plus } from "lucide-react";
+import { Heart, Activity, Calendar, Pill, User, Plus, Brain } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
@@ -45,7 +45,7 @@ const Dashboard = () => {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate('/vitals')}>
             <CardHeader>
               <CardTitle className="flex items-center">
@@ -75,6 +75,16 @@ const Dashboard = () => {
               <CardDescription>Track your medication schedule</CardDescription>
             </CardHeader>
           </Card>
+
+          <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate('/mood-analysis')}>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Brain className="h-5 w-5 mr-2 text-purple-500" />
+                Mood Analysis
+              </CardTitle>
+              <CardDescription>Voice analysis and emotional wellness</CardDescription>
+            </CardHeader>
+          </Card>
         </div>
 
         {/* Recent Activity */}
@@ -98,6 +108,13 @@ const Dashboard = () => {
                   <span>Morning medication taken</span>
                 </div>
                 <span className="text-sm text-muted-foreground">6 hours ago</span>
+              </div>
+              <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
+                <div className="flex items-center">
+                  <Brain className="h-4 w-4 mr-2 text-purple-500" />
+                  <span>Mood analysis completed</span>
+                </div>
+                <span className="text-sm text-muted-foreground">8 hours ago</span>
               </div>
               <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
                 <div className="flex items-center">
