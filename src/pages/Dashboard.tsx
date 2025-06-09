@@ -1,7 +1,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Heart, Activity, Calendar, Pills, User, Plus } from "lucide-react";
+import { Heart, Activity, Calendar, Pill, User, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
@@ -69,7 +69,7 @@ const Dashboard = () => {
           <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate('/medications')}>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Pills className="h-5 w-5 mr-2 text-green-500" />
+                <Pill className="h-5 w-5 mr-2 text-green-500" />
                 Medications
               </CardTitle>
               <CardDescription>Track your medication schedule</CardDescription>
@@ -94,7 +94,7 @@ const Dashboard = () => {
               </div>
               <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
                 <div className="flex items-center">
-                  <Pills className="h-4 w-4 mr-2 text-green-500" />
+                  <Pill className="h-4 w-4 mr-2 text-green-500" />
                   <span>Morning medication taken</span>
                 </div>
                 <span className="text-sm text-muted-foreground">6 hours ago</span>

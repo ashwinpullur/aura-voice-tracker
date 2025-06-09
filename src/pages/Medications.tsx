@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ArrowLeft, Plus, Pills, Clock, Bell } from "lucide-react";
+import { ArrowLeft, Plus, Pill, Clock, Bell } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const Medications = () => {
@@ -146,7 +146,7 @@ const Medications = () => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
-              <Pills className="h-5 w-5 mr-2 text-green-500" />
+              <Pill className="h-5 w-5 mr-2 text-green-500" />
               Today's Schedule
             </CardTitle>
             <CardDescription>Mark medications as taken</CardDescription>
@@ -193,7 +193,7 @@ const Medications = () => {
           </CardHeader>
           <CardContent>
             <div className="text-center py-8 text-muted-foreground">
-              <Pills className="h-12 w-12 mx-auto mb-2 opacity-50" />
+              <Pill className="h-12 w-12 mx-auto mb-2 opacity-50" />
               <p>Medication history will appear here</p>
             </div>
           </CardContent>
