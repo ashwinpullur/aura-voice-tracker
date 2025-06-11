@@ -9,32 +9,33 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      profiles: {
+      profiles: { // Updated to match the new SQL migration
         Row: {
-          avatar_url: string | null
-          created_at: string | null
-          email: string | null
-          full_name: string | null
-          id: string
-          updated_at: string | null
+          id: string // UUID
+          full_name: string | null // TEXT
+          avatar_url: string | null // TEXT, nullable
+          updated_at: string | null // TIMESTAMPTZ, default now()
         }
         Insert: {
-          avatar_url?: string | null
-          created_at?: string | null
-          email?: string | null
-          full_name?: string | null
-          id: string
-          updated_at?: string | null
+          id: string // UUID
+          full_name?: string | null // TEXT
+          avatar_url?: string | null // TEXT, nullable
+          updated_at?: string | null // TIMESTAMPTZ, default now()
         }
         Update: {
-          avatar_url?: string | null
-          created_at?: string | null
-          email?: string | null
-          full_name?: string | null
-          id?: string
-          updated_at?: string | null
+          id?: string // UUID
+          full_name?: string | null // TEXT
+          avatar_url?: string | null // TEXT, nullable
+          updated_at?: string | null // TIMESTAMPTZ, default now()
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_id_fkey"
+            columns: ["id"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       table_name: {
         Row: {
