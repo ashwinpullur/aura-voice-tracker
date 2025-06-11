@@ -1,11 +1,23 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Heart, Activity, Calendar, Pill, User, Plus, Brain } from "lucide-react";
+import { Heart, Activity, Calendar, Pill, User, Plus, Brain, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { user, signOut } = useAuth();
+  const { toast } = useToast();
+
+  const handleLogout = async () => {
+    await signOut();
+    toast({
+      title: "Logged out",
+      description: "You have been successfully logged out.",
+    });
+  };
 
   const healthMetrics = [
     { label: "Heart Rate", value: "72 bpm", icon: Heart, color: "text-red-500" },
@@ -21,12 +33,18 @@ const Dashboard = () => {
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold text-foreground">Health Dashboard</h1>
-            <p className="text-muted-foreground">Track your wellness journey</p>
+            <p className="text-muted-foreground">Welcome back, {user?.email}!</p>
           </div>
-          <Button onClick={() => navigate('/profile')}>
-            <User className="h-4 w-4 mr-2" />
-            Profile
-          </Button>
+          <div className="flex space-x-2">
+            <Button onClick={() => navigate('/profile')}>
+              <User className="h-4 w-4 mr-2" />
+              Profile
+            </Button>
+            <Button variant="outline" onClick={handleLogout}>
+              <LogOut className="h-4 w-4 mr-2" />
+              Logout
+            </Button>
+          </div>
         </div>
 
         {/* Health Metrics Grid */}
