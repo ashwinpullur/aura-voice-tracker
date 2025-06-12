@@ -8,7 +8,6 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Dashboard from "./pages/Dashboard";
 import Vitals from "./pages/Vitals";
-import Appointments from "./pages/Appointments";
 import Medications from "./pages/Medications";
 import Profile from "./pages/Profile";
 import MoodAnalysis from "./pages/MoodAnalysis";
@@ -34,11 +33,6 @@ const App = () => (
             <Route path="/vitals" element={
               <ProtectedRoute>
                 <Vitals />
-              </ProtectedRoute>
-            } />
-            <Route path="/appointments" element={
-              <ProtectedRoute>
-                <Appointments />
               </ProtectedRoute>
             } />
             <Route path="/medications" element={
