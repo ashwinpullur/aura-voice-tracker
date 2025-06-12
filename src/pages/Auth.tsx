@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -86,18 +85,23 @@ const Auth = () => {
 
     setLoading(true);
 
-    // Generate OTP for email verification
-    const otpCode = generateNewOTP();
-    setPendingEmail(signupForm.email);
-    setShowOTP(true);
+    try {
+      // Generate OTP and send via email
+      await generateNewOTP(signupForm.email);
+      setPendingEmail(signupForm.email);
+      setShowOTP(true);
 
-    // Simulate sending OTP via email (in real app, this would be sent via backend)
-    console.log(`OTP for ${signupForm.email}: ${otpCode}`);
-    
-    toast({
-      title: "Verification Code Sent",
-      description: `A 6-digit code has been sent to ${signupForm.email}. Check console for demo purposes.`,
-    });
+      toast({
+        title: "Verification Code Sent",
+        description: `A 6-digit code has been sent to ${signupForm.email}. Please check your inbox.`,
+      });
+    } catch (error) {
+      toast({
+        title: "Failed to Send Code",
+        description: "There was an error sending the verification code. Please try again.",
+        variant: "destructive",
+      });
+    }
 
     setLoading(false);
   };
@@ -126,12 +130,19 @@ const Auth = () => {
   };
 
   const handleOTPResend = async () => {
-    const newOTP = generateNewOTP();
-    console.log(`New OTP for ${pendingEmail}: ${newOTP}`);
-    toast({
-      title: "New Code Sent",
-      description: "A new verification code has been generated. Check console for demo purposes.",
-    });
+    try {
+      await generateNewOTP(pendingEmail);
+      toast({
+        title: "New Code Sent",
+        description: "A new verification code has been sent to your email.",
+      });
+    } catch (error) {
+      toast({
+        title: "Failed to Resend",
+        description: "There was an error resending the code. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   if (showOTP) {
