@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Heart, Activity, Calendar, Pill, User, Plus, Brain, LogOut } from "lucide-react";
@@ -63,7 +62,7 @@ const Dashboard = () => {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate('/vitals')}>
             <CardHeader>
               <CardTitle className="flex items-center">
@@ -71,16 +70,6 @@ const Dashboard = () => {
                 Log Vitals
               </CardTitle>
               <CardDescription>Record blood pressure, weight, and more</CardDescription>
-            </CardHeader>
-          </Card>
-
-          <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate('/appointments')}>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Calendar className="h-5 w-5 mr-2 text-blue-500" />
-                Appointments
-              </CardTitle>
-              <CardDescription>Manage your medical appointments</CardDescription>
             </CardHeader>
           </Card>
 
