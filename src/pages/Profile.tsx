@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,33 +7,140 @@ import { Label } from "@/components/ui/label";
 import { ArrowLeft, User, Save, Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
 const Profile = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
+  const [loading, setLoading] = useState(false);
   const [profile, setProfile] = useState({
-    name: "John Doe",
-    email: "john.doe@email.com",
-    phone: "+1 234 567 8900",
-    birthDate: "1990-01-01",
-    height: "175",
-    emergencyContact: "Jane Doe",
-    emergencyPhone: "+1 234 567 8901",
-    bloodType: "O+",
-    allergies: "Penicillin, Shellfish",
+    name: "",
+    email: "",
+    phone: "",
+    birthDate: "",
+    height: "",
+    emergencyContact: "",
+    emergencyPhone: "",
+    bloodType: "",
+    allergies: "",
   });
+
+  // Load user profile data on component mount
+  useEffect(() => {
+    if (user) {
+      loadProfile();
+    }
+  }, [user]);
+
+  const loadProfile = async () => {
+    if (!user) return;
+
+    setLoading(true);
+    try {
+      // Get profile data from profiles table
+      const { data: profileData, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (error && error.code !== 'PGRST116') {
+        console.error('Error loading profile:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load profile data.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Set profile data with user's auth data as fallback
+      setProfile({
+        name: profileData?.full_name || user.user_metadata?.full_name || "",
+        email: profileData?.email || user.email || "",
+        phone: profileData?.phone || "",
+        birthDate: profileData?.birth_date || "",
+        height: profileData?.height || "",
+        emergencyContact: profileData?.emergency_contact || "",
+        emergencyPhone: profileData?.emergency_phone || "",
+        bloodType: profileData?.blood_type || "",
+        allergies: profileData?.allergies || "",
+      });
+    } catch (error) {
+      console.error('Error loading profile:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load profile data.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleInputChange = (field: string, value: string) => {
     setProfile(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleSave = () => {
-    // Here you would typically save to a database
-    toast({
-      title: "Profile Updated",
-      description: "Your profile has been saved successfully.",
-    });
+  const handleSave = async () => {
+    if (!user) return;
+
+    setLoading(true);
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .upsert({
+          id: user.id,
+          email: profile.email,
+          full_name: profile.name,
+          phone: profile.phone,
+          birth_date: profile.birthDate,
+          height: profile.height,
+          emergency_contact: profile.emergencyContact,
+          emergency_phone: profile.emergencyPhone,
+          blood_type: profile.bloodType,
+          allergies: profile.allergies,
+          updated_at: new Date().toISOString(),
+        });
+
+      if (error) {
+        console.error('Error saving profile:', error);
+        toast({
+          title: "Error",
+          description: "Failed to save profile data.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      toast({
+        title: "Profile Updated",
+        description: "Your profile has been saved successfully.",
+      });
+    } catch (error) {
+      console.error('Error saving profile:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save profile data.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
+
+  if (loading && !profile.email) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-2 text-muted-foreground">Loading profile...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background p-4">
@@ -165,9 +272,9 @@ const Profile = () => {
         </Card>
 
         {/* Save Button */}
-        <Button onClick={handleSave} className="w-full">
+        <Button onClick={handleSave} className="w-full" disabled={loading}>
           <Save className="h-4 w-4 mr-2" />
-          Save Profile
+          {loading ? "Saving..." : "Save Profile"}
         </Button>
       </div>
     </div>
