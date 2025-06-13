@@ -1,26 +1,22 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Heart, Eye, EyeOff, Shield } from "lucide-react";
+import { Heart, Eye, EyeOff } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useEffect } from "react";
-import OTPInput from "@/components/OTPInput";
-import { useOTP } from "@/hooks/useOTP";
 
 const Auth = () => {
   const { signIn, signUp, user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { generateNewOTP, verifyOTP } = useOTP();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [showOTP, setShowOTP] = useState(false);
-  const [pendingEmail, setPendingEmail] = useState("");
 
   // Redirect authenticated users to dashboard
   useEffect(() => {
@@ -85,97 +81,22 @@ const Auth = () => {
 
     setLoading(true);
 
-    try {
-      // Generate OTP and send via email
-      await generateNewOTP(signupForm.email);
-      setPendingEmail(signupForm.email);
-      setShowOTP(true);
+    const { error } = await signUp(signupForm.email, signupForm.password, signupForm.fullName);
 
+    if (error) {
       toast({
-        title: "Verification Code Sent",
-        description: `A 6-digit code has been sent to ${signupForm.email}. Please check your inbox.`,
-      });
-    } catch (error) {
-      toast({
-        title: "Failed to Send Code",
-        description: "There was an error sending the verification code. Please try again.",
+        title: "Signup Failed",
+        description: error.message,
         variant: "destructive",
       });
+    } else {
+      toast({
+        title: "Account Created!",
+        description: "Your account has been created successfully.",
+      });
     }
-
     setLoading(false);
   };
-
-  const handleOTPVerify = async (otp: string) => {
-    if (verifyOTP(otp)) {
-      // OTP verified, proceed with signup
-      const { error } = await signUp(signupForm.email, signupForm.password, signupForm.fullName);
-
-      if (error) {
-        toast({
-          title: "Signup Failed",
-          description: error.message,
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Account Created!",
-          description: "Your account has been created successfully.",
-        });
-        setShowOTP(false);
-      }
-    } else {
-      throw new Error("Invalid OTP");
-    }
-  };
-
-  const handleOTPResend = async () => {
-    try {
-      await generateNewOTP(pendingEmail);
-      toast({
-        title: "New Code Sent",
-        description: "A new verification code has been sent to your email.",
-      });
-    } catch (error) {
-      toast({
-        title: "Failed to Resend",
-        description: "There was an error resending the code. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  if (showOTP) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
-        <Card className="w-full max-w-md">
-          <CardHeader className="text-center">
-            <div className="flex justify-center mb-4">
-              <Shield className="h-12 w-12 text-blue-500" />
-            </div>
-            <CardTitle className="text-2xl">Email Verification</CardTitle>
-            <CardDescription>
-              Please verify your email address to complete registration
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <OTPInput
-              onVerify={handleOTPVerify}
-              onResend={handleOTPResend}
-              isLoading={loading}
-            />
-            <Button
-              variant="ghost"
-              className="w-full mt-4"
-              onClick={() => setShowOTP(false)}
-            >
-              Back to Sign Up
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
